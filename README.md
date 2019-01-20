@@ -13,6 +13,7 @@ These instruction will guide how to run this project.
 ### Installing
 ```shell
 $ git clone https://github.com/MartinToruan/tax_calculator.git
+$ cd tax_calculator
 $ docker-compose up -d
 ```
 
