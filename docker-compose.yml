@@ -1,0 +1,17 @@
+version: "2"
+services:
+  app:
+    container_name: tax_calculator_app
+    image: martintoruan/tax_calculator_app:latest
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    container_name: tax_calculator_db
+    image: martintoruan/tax_calculator_db:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
