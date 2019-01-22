@@ -1,6 +1,6 @@
 create table tax (
 	id serial,
-	name varchar(200),
-	tax_code int,
-	price float
+	name varchar(200) NOT NULL,
+	tax_code int NOT NULL,
+	price float NOT NULL
 );
