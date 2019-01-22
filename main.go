@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -18,6 +19,10 @@ var (
 	persistenceClient svc.Persistence
 	logicClient       svc.Logic
 )
+
+// Response
+var invalidURLError = map[string]string{"error": "invalid api url"}
+var systemError = map[string]string{"error": "system error. Call IT Support."}
 
 func init() {
 	// Setup Persistence
@@ -94,7 +99,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	case "/add/tax":
 		err := logicClient.HandleAddTax(r, persistenceClient)
 		if err != nil {
+			fmt.Println("err: ", err)
+
+			// System Failure
+			errorResp, _ := json.Marshal(systemError)
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
+			_, _ = w.Write(errorResp)
 			return
 		}
 	case "/get_bill":
@@ -102,7 +113,12 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		data, err := logicClient.HandleGetBill(persistenceClient)
 		if err != nil {
 			fmt.Println("err: ", err)
+
+			// System Failure
+			errorResp, _ := json.Marshal(systemError)
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
+			_, _ = w.Write(errorResp)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -110,7 +126,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		_, err = w.Write(data)
 		return
 	default:
+		// Invalid URL
+		errorResp, _ := json.Marshal(invalidURLError)
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write(errorResp)
 		return
 	}
 }
