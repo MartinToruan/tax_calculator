@@ -21,6 +21,7 @@ var (
 )
 
 // Response
+var responseCreated = map[string]string{"status": "created"}
 var invalidURLError = map[string]string{"error": "invalid api url"}
 var systemError = map[string]string{"error": "system error. Call IT Support."}
 
@@ -108,6 +109,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write(errorResp)
 			return
 		}
+		// Response
+		responseCreated, _ := json.Marshal(responseCreated)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_, err = w.Write(responseCreated)
+		return
+
 	case "/get_bill":
 		var data []byte
 		data, err := logicClient.HandleGetBill(persistenceClient)
